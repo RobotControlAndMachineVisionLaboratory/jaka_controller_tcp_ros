@@ -1,0 +1,3 @@
+[submodule "dependency/universal_msgs"]
+	path = dependency/universal_msgs
+	url = https://github.com/RobotControlAndMachineVisionLaboratory/universal_msgs.git
