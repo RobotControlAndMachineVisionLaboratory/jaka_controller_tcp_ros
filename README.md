@@ -9,7 +9,7 @@
 
 ## Dependency
 
-jsoncpp:
+1. jsoncpp:
 
 ``` bash
 sudo apt-get install libjsoncpp-dev
@@ -17,15 +17,32 @@ sudo apt-get install libjsoncpp-dev
 
 This should install json related header files in `/usr/include/jsoncpp` as we use in the `CMakeLists.txt`.
 
+2. universal_msgs:
+
+```bash
+git submodule init
+git submodule update
+```
+
 ## Build and Test
+
+build:
 
 ```bash
 cd ${base_path_to_your_catkin_workspace}
 catkin_make
 ```
 
-The executable node can be run as:
+run:
+
+open one terminal and run:
 
 ```bash
-./bin/robot_client_tcp_test
+roscore
+```
+
+open another terminal and run:
+
+```bash
+rosrun jaka_controller_tcp_ros jaka_ros_node
 ```
