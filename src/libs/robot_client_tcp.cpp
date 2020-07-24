@@ -114,14 +114,14 @@ void RobotClient::MoveJ(const std::vector<float> &joint_vector, const float &vel
 	buf[rec_len] = '\0';
 	// std::cout << "Reveived: " << buf << std::endl;
 
-	string_tmp = "{\"cmdName\":\"wait_complete\"}";
-	cmd_ptr = string_tmp.c_str();
-	if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
-		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
-		exit(-1);
-	}
-	rec_len = recv(socketrqt, buf, MAXLINE, 0);
-	buf[rec_len] = '\0';
+	// string_tmp = "{\"cmdName\":\"wait_complete\"}";
+	// cmd_ptr = string_tmp.c_str();
+	// if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
+	// 	std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+	// 	exit(-1);
+	// }
+	// rec_len = recv(socketrqt, buf, MAXLINE, 0);
+	// buf[rec_len] = '\0';
 	// std::cout << "Reveived: " << buf << std::endl;
 }
 
@@ -139,17 +139,17 @@ void RobotClient::MoveE(const std::vector<float> &cart_vector, const float &velo
 	}
 	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
 	buf[rec_len] = '\0';
-	std::cout << "Reveived: " << buf << std::endl;
+	// std::cout << "Reveived: " << buf << std::endl;
 
-	string_tmp = "{\"cmdName\":\"wait_complete\"}";
-	cmd_ptr = string_tmp.c_str();
-	if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
-		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
-		exit(-1);
-	}
-	rec_len = recv(socketrqt, buf, MAXLINE, 0);
-	buf[rec_len] = '\0';
-	std::cout << "Reveived: " << buf << std::endl;
+	// string_tmp = "{\"cmdName\":\"wait_complete\"}";
+	// cmd_ptr = string_tmp.c_str();
+	// if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
+	// 	std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+	// 	exit(-1);
+	// }
+	// rec_len = recv(socketrqt, buf, MAXLINE, 0);
+	// buf[rec_len] = '\0';
+	// std::cout << "Reveived: " << buf << std::endl;
 }
 
 void RobotClient::SetRate(const float &rate_value) {
@@ -242,7 +242,7 @@ void RobotClient::GetRobotPose(std::vector<float>&joint, std::vector<float>&cart
 	usleep(2e5);
 	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
 	buf[rec_len] = '\0';
-	std::cout << "Reveived: " << buf << std::endl;
+	// std::cout << "Reveived: " << buf << std::endl;
 
 	int joint_size ;
 	int cart_size;
@@ -310,12 +310,12 @@ void RobotClient::Shutdown() {
 	std::cout << "RobotClient::Shutdown Started!" << std::endl;
 
 	cmd_ptr = "{\"cmdName\":\"shutdown\"}";
-	std::cout << "Send command to server:" << cmd_ptr << std::endl;
+	// std::cout << "Send command to server:" << cmd_ptr << std::endl;
 	if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
 		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
 		exit(-1);
 	}
 	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
 	buf[rec_len] = '\0';
-	std::cout << "Reveived: " << buf << std::endl;
+	// std::cout << "Reveived: " << buf << std::endl;
 }

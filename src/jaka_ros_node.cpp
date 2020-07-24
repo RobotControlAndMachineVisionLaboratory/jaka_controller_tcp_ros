@@ -70,6 +70,7 @@ void jaka_ros_node::CommandCallback(const universal_msgs::Command::ConstPtr &msg
 	}else if (msg->type == 2)
 	{
 		std::cout<<"Move Joint Pose!"<<std::endl;
+		robotclient.MoveE(msg->pose, msg->speed);
 		return ;
 	}else if (msg->type == 3)
 	{
@@ -131,6 +132,11 @@ int jaka_ros_node::pubRobotPoseOnce()
 		tool_vector[i]=double(cart[i]);
 	}
 
+	std::cout << "Joint: [ " << q_actual[0] << ", " << q_actual[1] << ", " << q_actual[2]
+	<< ", " << q_actual[3] << ", " << q_actual[4] << ", " << q_actual[5] << " ]" << std::endl;
+	std::cout << "Cart: [ " << tool_vector[0] << ", " << tool_vector[1] << ", " << tool_vector[2]
+	<< ", " << tool_vector[3] << ", " << tool_vector[4] << ", " << tool_vector[5] << " ]" << std::endl;
+
 	universal_msgs::RobotMsg msg;
 	msg.header.stamp = ros::Time::now();
 	msg.data.q_actual=q_actual;
@@ -141,9 +147,10 @@ int jaka_ros_node::pubRobotPoseOnce()
 
 int main(int argc, char **argv)
 {
+	if (argc == 2)
+		robot_IP = argv[1];
 	ros::init(argc, argv, "jaka_ros_node");
 	jaka_ros_node node;
-	// node.start();
 
 	ros::Rate loop_rate(125);
 	while(ros::ok())
@@ -153,6 +160,5 @@ int main(int argc, char **argv)
 		loop_rate.sleep();
 	}
 
-	// node.stop();
 	return 0;
 }
