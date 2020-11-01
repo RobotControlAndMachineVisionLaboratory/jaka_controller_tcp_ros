@@ -9,7 +9,17 @@
 
 int main(int argc, char **argv)
 {
-	RobotClient robotclient("192.168.51.15");
+	// RobotClient robotclient("192.168.51.15");
+
+	RobotClient robotclient;
+	robotclient.SetIP("192.168.51.15");
+
+
+	robotclient.PowerOn();
+
+	robotclient.Enable();
+
+	robotclient.SetAout(0, 7, 1);
 
 	std::cout<<"ready to -- SetRate";
 	float rapid_ratio=0.6;

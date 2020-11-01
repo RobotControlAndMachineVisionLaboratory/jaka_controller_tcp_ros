@@ -21,17 +21,35 @@
 
 class RobotClient {
 public:
-    RobotClient(std::string address);
 
     RobotClient();
 
+    RobotClient(std::string address);
+
+    void SetIP(std::string address);
+
     ~RobotClient();
+
+    //机器人本体上电
+    void PowerOn();
+
+    //释放抱闸，机器人上使能
+    void Enable();
+
+    //机器人本体下电
+    void PowerOff();
+
+    //锁止抱闸，机器人下使能
+    void Disable();
 
     //设置运动速度倍率
     void SetRate(const float &rate_value);
 
     //设置模拟量的输出
-    void SetAout(const int &type, const int &doutid, const float &value);
+    void SetAout(const int &type, const int &aoutid, const float &value);
+
+    //设置数字量的输出
+    void SetDout(const int &type, const int &doutid, const int &value);
 
     //获取机器人关节姿态和末端姿态
     void GetRobotPose(std::vector<float> &jnt, std::vector<float> &cart);

@@ -29,9 +29,38 @@ RobotClient::RobotClient(std::string address) {
 		exit(-1);
 	}
 
-	std::cout << "Socketrqt connects successfully!" << std::endl;
+	std::cout << "Socket connects successfully!" << std::endl;
+}
 
-    // 上电
+void RobotClient::SetIP(std::string address) {
+	std::cout << "Connecting to IP address : " << address << std::endl;
+	const char *address_ptr = address.c_str();
+    // 创建socketrqt
+	if ((socketrqt = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+		std::cout << "create socket error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+		exit(0);
+	}
+
+	memset(&servaddr_rqt, 0, sizeof(servaddr_rqt));
+    // 指定IP地址版本为IPV4
+	servaddr_rqt.sin_family = AF_INET;
+    // 设置端口10001
+	servaddr_rqt.sin_port = htons(10001);
+    // IP地址转换函数
+	if (inet_pton(AF_INET, address_ptr, &servaddr_rqt.sin_addr) <= 0) {
+		std::cout << "inet_pton error for " << address_ptr;
+		exit(-1);
+	}
+
+	if (connect(socketrqt, (struct sockaddr *) &servaddr_rqt, sizeof(servaddr_rqt)) < 0) {
+		std::cout << "connect error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+		exit(-1);
+	}
+	std::cout << "Socket connects successfully!" << std::endl;
+}
+
+void RobotClient::PowerOn() {
+	// 上电
 	std::cout << "Power Started!" << std::endl;
 	string_tmp = "{\"cmdName\":\"power_on\"}";
 	cmd_ptr = string_tmp.c_str();
@@ -41,7 +70,9 @@ RobotClient::RobotClient(std::string address) {
 	}
 	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
 	buf[rec_len] = '\0';
+}
 
+void RobotClient::Enable() {
     // 使能
 	std::cout << "Enable Started!" << std::endl;
 	string_tmp = "{\"cmdName\":\"enable_robot\"}";
@@ -50,12 +81,37 @@ RobotClient::RobotClient(std::string address) {
 		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
 		exit(-1);
 	}
-	rec_len = recv(socketrqt, buf, MAXLINE, 0);
+	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
 	buf[rec_len] = '\0';
 }
 
-RobotClient::~RobotClient()
-{
+void RobotClient::PowerOff() {
+	// 断电
+	std::cout << "Power Off!" << std::endl;
+	string_tmp = "{\"cmdName\":\"power_off\"}";
+	cmd_ptr = string_tmp.c_str();
+	if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
+		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+		exit(-1);
+	}
+	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
+	buf[rec_len] = '\0';
+}
+
+void RobotClient::Disable() {
+    // 下使能
+	std::cout << "Disable Started!" << std::endl;
+	string_tmp = "{\"cmdName\":\"disable_robot\"}";
+	cmd_ptr = string_tmp.c_str();
+	if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
+		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+		exit(-1);
+	}
+	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
+	buf[rec_len] = '\0';
+}
+
+RobotClient::~RobotClient(){
     // 下使能
 	std::cout << "Disable Started!" << std::endl;
 	string_tmp = "{\"cmdName\":\"disable_robot\"}";
@@ -82,7 +138,6 @@ RobotClient::~RobotClient()
 	std::cout<<"Class RobotClient Unconstructed!"<<std::endl;
 }
 
-
 void RobotClient::SetAout(const int &type, const int &aoutid, const float &value) {
 	std::cout << "RobotClient::SetAout Started!" << std::endl;
     // SetAout
@@ -95,7 +150,22 @@ void RobotClient::SetAout(const int &type, const int &aoutid, const float &value
 	}
 	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
 	buf[rec_len] = '\0';
-	// std::cout << "Reveived: " << buf << std::endl;
+	std::cout << "Reveived: " << buf << std::endl;
+}
+
+void RobotClient::SetDout(const int &type, const int &doutid, const int &value){
+	std::cout << "RobotClient::SetDout Started!" << std::endl;
+    // SetDout
+	string_tmp = "{\"cmdName\":\"set_digital_output\",\"type\":" + std::to_string(type) + ",\"index\":" +
+	std::to_string(doutid) + ",\"value\":" + std::to_string(value) + "}";
+	cmd_ptr = string_tmp.c_str();
+	if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
+		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+		exit(-1);
+	}
+	int rec_len = recv(socketrqt, buf, MAXLINE, 0);
+	buf[rec_len] = '\0';
+	std::cout << "Reveived: " << buf << std::endl;
 }
 
 void RobotClient::MoveJ(const std::vector<float> &joint_vector, const float &velocity) {
@@ -114,14 +184,14 @@ void RobotClient::MoveJ(const std::vector<float> &joint_vector, const float &vel
 	buf[rec_len] = '\0';
 	// std::cout << "Reveived: " << buf << std::endl;
 
-	// string_tmp = "{\"cmdName\":\"wait_complete\"}";
-	// cmd_ptr = string_tmp.c_str();
-	// if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
-	// 	std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
-	// 	exit(-1);
-	// }
-	// rec_len = recv(socketrqt, buf, MAXLINE, 0);
-	// buf[rec_len] = '\0';
+	string_tmp = "{\"cmdName\":\"wait_complete\"}";
+	cmd_ptr = string_tmp.c_str();
+	if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
+		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+		exit(-1);
+	}
+	rec_len = recv(socketrqt, buf, MAXLINE, 0);
+	buf[rec_len] = '\0';
 	// std::cout << "Reveived: " << buf << std::endl;
 }
 
@@ -141,14 +211,14 @@ void RobotClient::MoveE(const std::vector<float> &cart_vector, const float &velo
 	buf[rec_len] = '\0';
 	// std::cout << "Reveived: " << buf << std::endl;
 
-	// string_tmp = "{\"cmdName\":\"wait_complete\"}";
-	// cmd_ptr = string_tmp.c_str();
-	// if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
-	// 	std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
-	// 	exit(-1);
-	// }
-	// rec_len = recv(socketrqt, buf, MAXLINE, 0);
-	// buf[rec_len] = '\0';
+	string_tmp = "{\"cmdName\":\"wait_complete\"}";
+	cmd_ptr = string_tmp.c_str();
+	if (send(socketrqt, cmd_ptr, strlen(cmd_ptr), 0) < 0) {
+		std::cout << "send msg error:" << strerror(errno) << "(errno:" << errno << ")" << std::endl;
+		exit(-1);
+	}
+	rec_len = recv(socketrqt, buf, MAXLINE, 0);
+	buf[rec_len] = '\0';
 	// std::cout << "Reveived: " << buf << std::endl;
 }
 

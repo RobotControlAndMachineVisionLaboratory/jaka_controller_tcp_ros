@@ -24,6 +24,8 @@ class jaka_ros_node
 public:
 	jaka_ros_node():robotclient(robot_IP)
 	{
+		robotclient.PowerOn();
+		robotclient.Enable();
 		cmd_sub=nh.subscribe(command_Topic_Name, 1, &jaka_ros_node::CommandCallback,this);
 		robot_pub=nh.advertise<universal_msgs::RobotMsg>(robotMsg_Topic_Name, 1);
 	}
