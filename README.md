@@ -24,7 +24,18 @@ git submodule init
 git submodule update
 ```
 
+And move `universal_msgs` package from `jaka_controller_tcp_ros/dependency/` to `${base_path_to_your_catkin_workspace}/src/`.
+
+
+3. ros-kinetic-universal-robot package:
+
+```bash
+sudo apt install ros-kinetic-universal-robot
+```
+
 ## Build and Test
+
+Change `robot_IP` in `jaka_ros_node.cpp` or set `robot_IP` dynamically using argv[1]
 
 build:
 
@@ -45,4 +56,10 @@ open another terminal and run:
 
 ```bash
 rosrun jaka_controller_tcp_ros jaka_ros_node
+```
+
+or set `robot_IP` dynamically using argv[1]:
+
+```bash
+rosrun jaka_controller_tcp_ros jaka_ros_node 192.168.x.x
 ```
